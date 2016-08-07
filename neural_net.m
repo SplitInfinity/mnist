@@ -1,7 +1,7 @@
-function neural_net
+function err = neural_net(hidden_layers)
 
 % Training hyperparameters
-NUM_EPOCHS = 1;
+NUM_EPOCHS = 5;
 TRAINING_SET_SIZE = 60000;
 TEST_SET_SIZE = 10000;
 MINI_BATCH_SIZE = 100;
@@ -17,7 +17,7 @@ NUM_INPUTS = 784;
 NUM_OUTPUTS = 10;
 
 % Neural net layer sizes
-LAYERS = [NUM_INPUTS 128 32 NUM_OUTPUTS];
+LAYERS = [NUM_INPUTS hidden_layers NUM_OUTPUTS];
 NUM_LAYERS = columns(LAYERS)-1;
 
 % Weight and bias cells
@@ -41,7 +41,7 @@ train_imgs = train_imgs(17:end);	% Discard file header
 
 train_lbls_file = fopen("train_labels.gz", "rzb");
 train_lbls = fread(train_lbls_file);
-train_lbls = train_lbls(9:end);	% Discard file header
+train_lbls = train_lbls(9:end);		% Discard file header
 
 % Training
 for epoch = 1:NUM_EPOCHS
@@ -83,7 +83,7 @@ for epoch = 1:NUM_EPOCHS
 		onehotlbls = identity(1:end, lbls+1);
 		loss = sum(-log(sum(imgs .* onehotlbls))) / MINI_BATCH_SIZE;
 
-		printf ("Epoch %d, mini-batch %d - loss = %f\n", epoch, mb, loss);
+		% printf ("Epoch %d, mini-batch %d - loss = %f\n", epoch, mb, loss);
 
 		% Initial gradient
 		imgs = imgs - onehotlbls;
@@ -138,5 +138,5 @@ test_imgs = expimgs ./ (ones(NUM_OUTPUTS, 1) * sum(expimgs));
 [mxs, inds] = max(test_imgs);
 err = 1 - (sum((test_lbls+1) == inds) / TEST_SET_SIZE);
 
-printf("Testing done - final error: %f\n", err);
+% printf("Testing done - final error: %f\n", err);
 endfunction
